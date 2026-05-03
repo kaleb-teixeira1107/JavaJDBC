@@ -51,7 +51,7 @@ public class ProdutoDao {
                     Conexao.getConexao();
                 PreparedStatement ps = conn.prepareStatement(sql)
             ){
-                ps.setInt(1, produto.getId());
+                ps.setInt(1, produto());
 
                 int linhasAfetadas = ps.executeUpdate();
 
