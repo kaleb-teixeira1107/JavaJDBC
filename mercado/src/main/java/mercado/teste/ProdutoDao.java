@@ -1,5 +1,7 @@
 package mercado.teste;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -45,13 +47,13 @@ public class ProdutoDao {
             }
         }
 
-        public void excluir (Produto produto) throws SQLException {
+        public void excluir (int produto) throws SQLException {
             String sql = "DELETE FROM produto WHERE id=?";
             try(Connection conn =
                     Conexao.getConexao();
                 PreparedStatement ps = conn.prepareStatement(sql)
             ){
-                ps.setInt(1, produto());
+                ps.setInt(1, produto);
 
                 int linhasAfetadas = ps.executeUpdate();
 
@@ -105,6 +107,28 @@ public class ProdutoDao {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+            }
+
+            public List<Produto> buscarTodos()throws SQLException{
+            String sql = "SELECT * FROM produto";
+            List<Produto> produtos = new ArrayList<>();
+
+            try(Connection conn = Conexao.getConexao();
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    produtos.add(new Produto(
+                            rs.getInt("id"),
+                            rs.getString("nome"),
+                            rs.getInt("quantidade"),
+                            rs.getDouble("preco")
+                    ));
+                }
+                return produtos;
+            }
+
+
+
             }
             
 }
