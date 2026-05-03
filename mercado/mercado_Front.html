@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mercado — Gestão de Produtos</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde: #1D9E75;
+    --verde-claro: #E1F5EE;
+    --verde-escuro: #085041;
+    --cinza-fundo: #F5F5F2;
+    --cinza-borda: #D3D1C7;
+    --cinza-texto: #5F5E5A;
+    --branco: #ffffff;
+    --vermelho: #E24B4A;
+    --vermelho-claro: #FCEBEB;
+    --amarelo-claro: #FAEEDA;
+    --amarelo: #BA7517;
+    --preto: #1a1a18;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cinza-fundo);
+    font-family: 'Syne', sans-serif;
+    color: var(--preto);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--preto);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    border-bottom: 2px solid var(--verde);
+  }
+
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    color: var(--branco);
+    letter-spacing: 0.02em;
+  }
+
+  .logo span {
+    color: var(--verde);
+  }
+
+  .header-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--cinza-borda);
+    font-family: 'DM Mono', monospace;
+  }
+
+  main {
+    max-width: 960px;
+    margin: 2.5rem auto;
+    padding: 0 1.5rem;
+  }
+
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: var(--branco);
+    border: 0.5px solid var(--cinza-borda);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--verde);
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--cinza-texto);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 0.4rem;
+  }
+
+  .stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--preto);
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .form-panel {
+    background: var(--branco);
+    border: 0.5px solid var(--cinza-borda);
+    border-radius: 16px;
+    overflow: hidden;
+    position: sticky;
+    top: 1.5rem;
+  }
+
+  .panel-header {
+    background: var(--preto);
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .panel-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--verde);
+  }
+
+  .panel-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--branco);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .form-body {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cinza-texto);
+    font-family: 'DM Mono', monospace;
+  }
+
+  input {
+    background: var(--cinza-fundo);
+    border: 1px solid var(--cinza-borda);
+    border-radius: 8px;
+    padding: 0.6rem 0.8rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    color: var(--preto);
+    width: 100%;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+  }
+
+  input:focus {
+    border-color: var(--verde);
+    box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.12);
+    background: var(--branco);
+  }
+
+  .btn-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .btn {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 0.65rem 1rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.15s;
+    text-transform: uppercase;
+  }
+
+  .btn:active { transform: scale(0.97); }
+
+  .btn-primary {
+    background: var(--verde);
+    color: #fff;
+    grid-column: 1 / -1;
+  }
+
+  .btn-primary:hover { opacity: 0.88; }
+
+  .btn-warn {
+    background: var(--amarelo-claro);
+    color: var(--amarelo);
+  }
+
+  .btn-warn:hover { opacity: 0.8; }
+
+  .btn-danger {
+    background: var(--vermelho-claro);
+    color: var(--vermelho);
+  }
+
+  .btn-danger:hover { opacity: 0.8; }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--cinza-texto);
+    border: 1px solid var(--cinza-borda);
+    grid-column: 1 / -1;
+  }
+
+  .btn-ghost:hover { background: var(--cinza-fundo); }
+
+  .divider {
+    border: none;
+    border-top: 0.5px solid var(--cinza-borda);
+    margin: 4px 0;
+  }
+
+  .search-box {
+    background: var(--branco);
+    border: 0.5px solid var(--cinza-borda);
+    border-radius: 16px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .search-box input {
+    flex: 1;
+    background: var(--cinza-fundo);
+  }
+
+  .search-box .btn {
+    white-space: nowrap;
+    background: var(--preto);
+    color: var(--branco);
+    padding: 0.6rem 1rem;
+  }
+
+  .table-panel {
+    background: var(--branco);
+    border: 0.5px solid var(--cinza-borda);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 0.5px solid var(--cinza-borda);
+  }
+
+  .table-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cinza-texto);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .count-badge {
+    background: var(--verde-claro);
+    color: var(--verde-escuro);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 99px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead tr {
+    background: var(--cinza-fundo);
+  }
+
+  th {
+    text-align: left;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--cinza-texto);
+    font-family: 'DM Mono', monospace;
+    padding: 0.7rem 1rem;
+    border-bottom: 0.5px solid var(--cinza-borda);
+  }
+
+  td {
+    padding: 0.85rem 1rem;
+    font-size: 0.9rem;
+    border-bottom: 0.5px solid var(--cinza-borda);
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  tr:hover td { background: rgba(29, 158, 117, 0.03); }
+
+  .id-pill {
+    background: var(--cinza-fundo);
+    border: 0.5px solid var(--cinza-borda);
+    border-radius: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--cinza-texto);
+    padding: 2px 8px;
+    display: inline-block;
+  }
+
+  .nome-col { font-weight: 600; }
+
+  .preco-col {
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    color: var(--verde-escuro);
+  }
+
+  .qtd-col {
+    font-family: 'DM Mono', monospace;
+  }
+
+  .qtd-low { color: var(--vermelho); }
+  .qtd-ok  { color: var(--verde); }
+
+  .action-cell {
+    display: flex;
+    gap: 6px;
+  }
+
+  .btn-sm {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .btn-sm:hover { opacity: 0.75; }
+
+  .btn-edit {
+    background: var(--amarelo-claro);
+    color: var(--amarelo);
+  }
+
+  .btn-del {
+    background: var(--vermelho-claro);
+    color: var(--vermelho);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--cinza-texto);
+  }
+
+  .empty-state p { font-size: 0.85rem; margin-top: 0.5rem; }
+
+  .toast {
+    position: fixed;
+    bottom: 2rem; right: 2rem;
+    background: var(--preto);
+    color: var(--branco);
+    padding: 0.8rem 1.2rem;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: all 0.25s;
+    pointer-events: none;
+    border-left: 3px solid var(--verde);
+    max-width: 280px;
+    z-index: 999;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .toast.error { border-left-color: var(--vermelho); }
+
+  .mode-indicator {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--cinza-texto);
+    text-align: center;
+    padding: 8px;
+    background: var(--cinza-fundo);
+    border-top: 0.5px solid var(--cinza-borda);
+  }
+
+  .mode-indicator span {
+    color: var(--verde);
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">mercado<span>.</span></div>
+  <div class="header-badge">gestão de produtos — jdbc</div>
+</header>
+
+<main>
+
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-label">Total Produtos</div>
+      <div class="stat-value" id="stat-total">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Itens em Estoque</div>
+      <div class="stat-value" id="stat-qtd">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Valor do Estoque</div>
+      <div class="stat-value" id="stat-valor">R$0</div>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <div>
+      <div class="form-panel">
+        <div class="panel-header">
+          <div class="panel-dot"></div>
+          <div class="panel-title" id="form-title">Novo Produto</div>
+        </div>
+        <div class="form-body">
+          <div class="field">
+            <label>ID</label>
+            <input type="number" id="input-id" placeholder="Ex: 1" min="1">
+          </div>
+          <div class="field">
+            <label>Nome</label>
+            <input type="text" id="input-nome" placeholder="Ex: Arroz Integral">
+          </div>
+          <div class="field">
+            <label>Quantidade</label>
+            <input type="number" id="input-qtd" placeholder="Ex: 100" min="0">
+          </div>
+          <div class="field">
+            <label>Preço (R$)</label>
+            <input type="number" id="input-preco" placeholder="Ex: 8.99" step="0.01" min="0">
+          </div>
+          <hr class="divider">
+          <button class="btn btn-primary" onclick="salvar()">Salvar Produto</button>
+          <div class="btn-group">
+            <button class="btn btn-warn" onclick="atualizar()">Atualizar</button>
+            <button class="btn btn-danger" onclick="deletar()">Excluir</button>
+          </div>
+          <button class="btn btn-ghost" onclick="limpar()">Limpar Campos</button>
+        </div>
+        <div class="mode-indicator" id="mode-label">modo: <span>inserir</span></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="search-box">
+        <input type="number" id="search-id" placeholder="Buscar por ID..." min="1">
+        <button class="btn" onclick="buscarPorId()">Buscar</button>
+      </div>
+
+      <div class="table-panel">
+        <div class="table-header">
+          <div class="table-title">Produtos Cadastrados</div>
+          <div class="count-badge" id="count-badge">0 registros</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nome</th>
+              <th>Qtd</th>
+              <th>Preço</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-body">
+            <tr>
+              <td colspan="5">
+                <div class="empty-state">
+                  <div style="font-size:1.5rem">📦</div>
+                  <p>Nenhum produto ainda. Adicione um acima.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const API = 'http://localhost:4567';
+
+  // ── SALVAR (POST) ──────────────────────────────────────────
+  async function salvar() {
+    const produto = coletarFormulario();
+    if (!validar(produto)) return;
+
+    try {
+      const res = await fetch(`${API}/produtos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(produto)
+      });
+      if (res.ok) { toast('Produto inserido!'); limpar(); await renderTabela(); }
+      else toast('Erro ao inserir produto.', true);
+    } catch { toast('API offline. Verifique o servidor.', true); }
+  }
+
+  // ── ATUALIZAR (PUT) ────────────────────────────────────────
+  async function atualizar() {
+    const produto = coletarFormulario();
+    if (!validar(produto)) return;
+
+    try {
+      const res = await fetch(`${API}/produtos`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(produto)
+      });
+      if (res.ok) { toast('Produto atualizado!'); limpar(); await renderTabela(); }
+      else toast('Erro ao atualizar produto.', true);
+    } catch { toast('API offline. Verifique o servidor.', true); }
+  }
+
+  // ── DELETAR pelo formulário (DELETE) ───────────────────────
+  async function deletar() {
+    const id = parseInt(document.getElementById('input-id').value);
+    if (!id) { toast('Informe o ID para excluir.', true); return; }
+    await deletarRow(id);
+    limpar();
+  }
+
+  // ── DELETAR pela tabela (DELETE) ───────────────────────────
+  async function deletarRow(id) {
+    try {
+      const res = await fetch(`${API}/produtos/${id}`, { method: 'DELETE' });
+      if (res.ok) { toast('Produto excluído.'); await renderTabela(); }
+      else toast('Erro ao excluir produto.', true);
+    } catch { toast('API offline. Verifique o servidor.', true); }
+  }
+
+  // ── BUSCAR POR ID (GET) ────────────────────────────────────
+  async function buscarPorId() {
+    const id = parseInt(document.getElementById('search-id').value);
+    if (!id) { toast('Informe um ID para buscar.', true); return; }
+
+    try {
+      const res = await fetch(`${API}/produtos/${id}`);
+      const data = await res.json();
+      if (!res.ok || data.erro) { toast('Produto não encontrado.', true); return; }
+
+      document.getElementById('input-id').value = data.id;
+      document.getElementById('input-nome').value = data.nome;
+      document.getElementById('input-qtd').value = data.quantidade;
+      document.getElementById('input-preco').value = data.preco;
+      document.getElementById('search-id').value = '';
+      toast(`Produto "${data.nome}" carregado.`);
+      setModo('editar');
+    } catch { toast('API offline. Verifique o servidor.', true); }
+  }
+
+  // ── EDITAR pela tabela ─────────────────────────────────────
+  async function editarRow(id) {
+    try {
+      const res = await fetch(`${API}/produtos/${id}`);
+      const data = await res.json();
+      if (!res.ok || data.erro) { toast('Produto não encontrado.', true); return; }
+
+      document.getElementById('input-id').value = data.id;
+      document.getElementById('input-nome').value = data.nome;
+      document.getElementById('input-qtd').value = data.quantidade;
+      document.getElementById('input-preco').value = data.preco;
+      setModo('editar');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch { toast('API offline. Verifique o servidor.', true); }
+  }
+
+  // ── HELPERS ────────────────────────────────────────────────
+  function coletarFormulario() {
+    return {
+      id:         parseInt(document.getElementById('input-id').value),
+      nome:       document.getElementById('input-nome').value.trim(),
+      quantidade: parseInt(document.getElementById('input-qtd').value),
+      preco:      parseFloat(document.getElementById('input-preco').value)
+    };
+  }
+
+  function validar(p) {
+    if (!p.id || !p.nome || isNaN(p.quantidade) || isNaN(p.preco)) {
+      toast('Preencha todos os campos.', true); return false;
+    }
+    return true;
+  }
+
+  function limpar() {
+    ['input-id','input-nome','input-qtd','input-preco'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    setModo('inserir');
+  }
+
+  function setModo(modo) {
+    document.getElementById('form-title').textContent = modo === 'inserir' ? 'Novo Produto' : 'Editar Produto';
+    document.getElementById('mode-label').innerHTML = `modo: <span>${modo}</span>`;
+  }
+
+  // ── TABELA (GET /produtos) ─────────────────────────────────
+  async function renderTabela() {
+    const tbody = document.getElementById('tabela-body');
+    try {
+      const res = await fetch(`${API}/produtos`);
+      const produtos = await res.json();
+
+      if (produtos.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div style="font-size:1.5rem">📦</div><p>Nenhum produto ainda. Adicione um acima.</p></div></td></tr>`;
+      } else {
+        tbody.innerHTML = produtos.map(p => {
+          const qtdClass = p.quantidade < 10 ? 'qtd-low' : 'qtd-ok';
+          const precoFmt = p.preco.toFixed(2).replace('.', ',');
+          return `
+            <tr>
+              <td><span class="id-pill">#${p.id}</span></td>
+              <td class="nome-col">${p.nome}</td>
+              <td class="qtd-col ${qtdClass}">${p.quantidade}</td>
+              <td class="preco-col">R$ ${precoFmt}</td>
+              <td><div class="action-cell">
+                <button class="btn-sm btn-edit" onclick="editarRow(${p.id})">editar</button>
+                <button class="btn-sm btn-del" onclick="deletarRow(${p.id})">excluir</button>
+              </div></td>
+            </tr>`;
+        }).join('');
+        atualizarStats(produtos);
+      }
+      document.getElementById('count-badge').textContent = `${produtos.length} registro${produtos.length !== 1 ? 's' : ''}`;
+    } catch {
+      tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div style="font-size:1.5rem">⚠️</div><p>Não foi possível conectar à API.</p></div></td></tr>`;
+    }
+  }
+
+  function atualizarStats(produtos) {
+    const total = produtos.length;
+    const qtd = produtos.reduce((s, p) => s + p.quantidade, 0);
+    const valor = produtos.reduce((s, p) => s + (p.preco * p.quantidade), 0);
+    document.getElementById('stat-total').textContent = total;
+    document.getElementById('stat-qtd').textContent = qtd;
+    document.getElementById('stat-valor').textContent = 'R$' + valor.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
+  let toastTimer;
+  function toast(msg, err = false) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = 'toast show' + (err ? ' error' : '');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.className = 'toast', 2500);
+  }
+
+  renderTabela();
+</script>
+</body>
+</html>
